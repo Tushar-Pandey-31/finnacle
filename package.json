@@ -6,10 +6,13 @@
     "build": "vite build"
   },
   "dependencies": {
-    "vue": "^3.0.4"
+    "axios": "^1.7.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
   },
   "devDependencies": {
-    "vite": "^1.0.0-rc.13",
-    "@vue/compiler-sfc": "^3.0.4"
+    "vite": "^5.4.8",
+    "@vitejs/plugin-react": "^4.3.2"
   }
 }
