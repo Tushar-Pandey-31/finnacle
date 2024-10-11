@@ -1,0 +1,29 @@
+.dashboard {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .search-bar {
+    margin-bottom: 20px;
+  }
+  
+  .search-bar input {
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .search-bar button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  
+  .stock-info {
+    margin-top: 20px;
+  }
+  
+  .stock-info p {
+    font-size: 18px;
+    margin: 5px 0;
+  }
+  
