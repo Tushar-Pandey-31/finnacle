@@ -40,7 +40,7 @@ export default function Options() {
     }
   }
 
-  function handleBuy(option, side) {
+  function handleTrade(option, side) {
     const qtyStr = prompt(`Enter quantity to ${side} for ${option.symbol || symbol} ${option.type || option.optionType || ''} ${option.strike || ''} ${option.expirationDate || ''}`);
     const qty = Number(qtyStr);
     if (!qty || qty <= 0) return;
@@ -53,88 +53,109 @@ export default function Options() {
     if (side === 'buy') {
       buy(payload);
     } else {
-      // selling without borrow checks; user must own quantity
       usePortfolioStore.getState().sell({ id, symbol, type: 'option', quantity: qty, price });
     }
   }
 
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Options</h2>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12 }}>
-        <input value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol e.g. AAPL" />
-        <button onClick={handleFetch} disabled={loading}>{loading ? 'Loading…' : 'Fetch Chain'}</button>
-        {expirations.length > 0 && (
-          <select value={expiry} onChange={(e) => setExpiry(e.target.value)}>
-            <option value="">All expirations</option>
-            {expirations.map((d) => <option key={d} value={d}>{d}</option>)}
-          </select>
-        )}
+    <div className="container">
+      <div className="card">
+        <div className="card-content">
+          <div className="controls" style={{ justifyContent: 'space-between' }}>
+            <h2 style={{ margin: 0 }}>Options</h2>
+            <div className="controls">
+              <input className="input" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol e.g. AAPL" />
+              <button className="button primary" onClick={handleFetch} disabled={loading}>{loading ? 'Loading…' : 'Fetch Chain'}</button>
+              {expirations.length > 0 && (
+                <select className="select" value={expiry} onChange={(e) => setExpiry(e.target.value)}>
+                  <option value="">All expirations</option>
+                  {expirations.map((d) => <option key={d} value={d}>{d}</option>)}
+                </select>
+              )}
+            </div>
+          </div>
+          {error && <div style={{ color: 'var(--danger)', marginTop: 8 }}>{error}</div>}
+        </div>
       </div>
-      {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>}
-      {!chain && <div>Enter a symbol and fetch the chain.</div>}
-      {chain && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-          <div>
-            <h3>Calls {expiry && `(${expiry})`}</h3>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Strike</th>
-                  <th>Bid</th>
-                  <th>Ask</th>
-                  <th>Last</th>
-                  <th>OI</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(filtered.calls || []).slice(0, 200).map((o, idx) => (
-                  <tr key={o.contractIdentifier || `${o.expirationDate}-${o.strike}-C-${idx}`}>
-                    <td>{o.strike}</td>
-                    <td>{o.bid}</td>
-                    <td>{o.ask}</td>
-                    <td>{o.lastPrice || o.price}</td>
-                    <td>{o.openInterest}</td>
-                    <td>
-                      <button onClick={() => handleBuy({ ...o, optionType: 'CALL' }, 'buy')}>Buy</button>
-                      <button onClick={() => handleBuy({ ...o, optionType: 'CALL' }, 'sell')}>Sell</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+
+      {chain ? (
+        <div className="grid grid-cols-2" style={{ marginTop: 16 }}>
+          <div className="card">
+            <div className="card-header">Calls {expiry && `(${expiry})`}</div>
+            <div className="card-content">
+              <div className="table-wrap">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Strike</th>
+                      <th>Bid</th>
+                      <th>Ask</th>
+                      <th>Last</th>
+                      <th>OI</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(filtered.calls || []).slice(0, 200).map((o, idx) => (
+                      <tr key={o.contractIdentifier || `${o.expirationDate}-${o.strike}-C-${idx}`}>
+                        <td>{o.strike}</td>
+                        <td>{o.bid}</td>
+                        <td>{o.ask}</td>
+                        <td>{o.lastPrice || o.price}</td>
+                        <td>{o.openInterest}</td>
+                        <td>
+                          <div className="controls">
+                            <button className="button primary" onClick={() => handleTrade({ ...o, optionType: 'CALL' }, 'buy')}>Buy</button>
+                            <button className="button ghost" onClick={() => handleTrade({ ...o, optionType: 'CALL' }, 'sell')}>Sell</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-          <div>
-            <h3>Puts {expiry && `(${expiry})`}</h3>
-            <table className="table">
-              <thead>
-                <tr>
-                  <th>Strike</th>
-                  <th>Bid</th>
-                  <th>Ask</th>
-                  <th>Last</th>
-                  <th>OI</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {(filtered.puts || []).slice(0, 200).map((o, idx) => (
-                  <tr key={o.contractIdentifier || `${o.expirationDate}-${o.strike}-P-${idx}`}>
-                    <td>{o.strike}</td>
-                    <td>{o.bid}</td>
-                    <td>{o.ask}</td>
-                    <td>{o.lastPrice || o.price}</td>
-                    <td>{o.openInterest}</td>
-                    <td>
-                      <button onClick={() => handleBuy({ ...o, optionType: 'PUT' }, 'buy')}>Buy</button>
-                      <button onClick={() => handleBuy({ ...o, optionType: 'PUT' }, 'sell')}>Sell</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="card">
+            <div className="card-header">Puts {expiry && `(${expiry})`}</div>
+            <div className="card-content">
+              <div className="table-wrap">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Strike</th>
+                      <th>Bid</th>
+                      <th>Ask</th>
+                      <th>Last</th>
+                      <th>OI</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(filtered.puts || []).slice(0, 200).map((o, idx) => (
+                      <tr key={o.contractIdentifier || `${o.expirationDate}-${o.strike}-P-${idx}`}>
+                        <td>{o.strike}</td>
+                        <td>{o.bid}</td>
+                        <td>{o.ask}</td>
+                        <td>{o.lastPrice || o.price}</td>
+                        <td>{o.openInterest}</td>
+                        <td>
+                          <div className="controls">
+                            <button className="button primary" onClick={() => handleTrade({ ...o, optionType: 'PUT' }, 'buy')}>Buy</button>
+                            <button className="button ghost" onClick={() => handleTrade({ ...o, optionType: 'PUT' }, 'sell')}>Sell</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
+        </div>
+      ) : (
+        <div className="card" style={{ marginTop: 16 }}>
+          <div className="card-content">Enter a symbol and fetch the chain.</div>
         </div>
       )}
     </div>

@@ -37,40 +37,50 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    // initial load
     loadAll(symbol);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="dashboard">
-      <h1>Stock Dashboard</h1>
-      <div className="search-bar">
-        <input
-          type="text"
-          value={symbol}
-          onChange={(e) => setSymbol(e.target.value)}
-          placeholder="Enter stock symbol"
-        />
-        <button onClick={handleSearch} disabled={loading}>{loading ? 'Loading…' : 'Search'}</button>
+    <div className="container">
+      <div className="card">
+        <div className="card-content">
+          <div className="controls" style={{ justifyContent: 'space-between' }}>
+            <h1 style={{ margin: 0 }}>Stock Dashboard</h1>
+            <div className="controls">
+              <input className="input" type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Enter stock symbol" />
+              <button className="button primary" onClick={handleSearch} disabled={loading}>{loading ? 'Loading…' : 'Search'}</button>
+            </div>
+          </div>
+          {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
+          {stockData && (
+            <div className="grid grid-cols-2" style={{ marginTop: 12 }}>
+              <div className="kpi">
+                <div className="kpi-label">Price</div>
+                <div className="kpi-value">{stockData.c}</div>
+              </div>
+              <div className="kpi">
+                <div className="kpi-label">Open</div>
+                <div className="kpi-value">{stockData.o}</div>
+              </div>
+              <div className="kpi">
+                <div className="kpi-label">High</div>
+                <div className="kpi-value">{stockData.h}</div>
+              </div>
+              <div className="kpi">
+                <div className="kpi-label">Low</div>
+                <div className="kpi-value">{stockData.l}</div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
-      {stockData && (
-        <div className="stock-info">
-          <h2>Stock Data for {symbol.toUpperCase()}</h2>
-          <p>Price: {stockData.c}</p>
-          <p>High: {stockData.h}</p>
-          <p>Low: {stockData.l}</p>
-          <p>Open: {stockData.o}</p>
-          <p>Previous Close: {stockData.pc}</p>
-        </div>
-      )}
-
       {series.length > 0 && (
-        <div style={{ margin: '24px auto', maxWidth: 960 }}>
-          <CandleChart seriesData={series} height={360} />
+        <div className="card chart-card" style={{ marginTop: 16 }}>
+          <div className="card-content">
+            <CandleChart seriesData={series} height={400} />
+          </div>
         </div>
       )}
     </div>
