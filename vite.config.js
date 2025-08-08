@@ -11,6 +11,16 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/fh/, ''),
       },
+      '/cmc': {
+        target: 'https://pro-api.coinmarketcap.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/cmc/, ''),
+      },
+      '/fx': {
+        target: 'https://api.forexrateapi.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/fx/, ''),
+      },
     },
   },
 });

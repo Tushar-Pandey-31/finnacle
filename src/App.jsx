@@ -3,6 +3,8 @@ import Dashboard from './pages/Dashboard';
 import Options from './pages/Options';
 import Portfolio from './pages/Portfolio';
 import Derivatives from './pages/Derivatives';
+import Crypto from './pages/Crypto';
+import Forex from './pages/Forex';
 import Navbar from './components/Navbar';
 
 function App() {
@@ -11,9 +13,11 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/crypto" element={<Crypto />} />
+        <Route path="/forex" element={<Forex />} />
+        <Route path="/derivatives" element={<Derivatives />} />
         <Route path="/options" element={<Options />} />
         <Route path="/portfolio" element={<Portfolio />} />
-        <Route path="/derivatives" element={<Derivatives />} />
       </Routes>
     </Router>
   );
