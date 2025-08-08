@@ -9,6 +9,7 @@ export default function Navbar() {
         <div className="brand">Finnacle</div>
         <nav className="nav">
           <Link to="/" className={current === '/' ? 'active' : ''}>Dashboard</Link>
+          <Link to="/derivatives" className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
           <Link to="/options" className={current === '/options' ? 'active' : ''}>Options</Link>
           <Link to="/portfolio" className={current === '/portfolio' ? 'active' : ''}>Portfolio</Link>
         </nav>

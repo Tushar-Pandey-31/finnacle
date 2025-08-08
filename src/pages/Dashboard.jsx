@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../index.css';
 import { getQuote, getCandles, finnhubCandleToSeries } from '../services/finnhub';
 import CandleChart from '../components/CandleChart';
+import SparklineChart from '../components/SparklineChart';
+import { useQuoteStream } from '../hooks/useQuoteStream';
+import TradePanel from '../components/TradePanel';
 
 const ONE_DAY = 24 * 60 * 60;
 
@@ -12,6 +15,8 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const { points, last } = useQuoteStream(symbol, { intervalMs: 5000, maxPoints: 300 });
 
   const loadAll = async (sym) => {
     setLoading(true); setError(''); setInfo('');
@@ -27,7 +32,7 @@ const Dashboard = () => {
       setSeries(finnhubCandleToSeries(candles));
     } catch (err) {
       setSeries([]);
-      setInfo('Chart data not available on current plan');
+      setInfo('Chart shows live price (no historical on current plan)');
     } finally {
       setLoading(false);
     }
@@ -43,6 +48,8 @@ const Dashboard = () => {
     loadAll(symbol);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const effectivePrice = stockData?.c ?? last?.c ?? points.at(-1)?.p;
 
   return (
     <div className="container">
@@ -61,7 +68,7 @@ const Dashboard = () => {
             <div className="grid grid-cols-2" style={{ marginTop: 12 }}>
               <div className="kpi">
                 <div className="kpi-label">Price</div>
-                <div className="kpi-value">{stockData.c}</div>
+                <div className="kpi-value">{(stockData.c ?? effectivePrice)?.toFixed ? (stockData.c ?? effectivePrice).toFixed(2) : stockData.c || effectivePrice || '-'}</div>
               </div>
               <div className="kpi">
                 <div className="kpi-label">Open</div>
@@ -80,13 +87,18 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {series.length > 0 && (
-        <div className="card chart-card" style={{ marginTop: 16 }}>
+      <div className="grid" style={{ marginTop: 16, gridTemplateColumns: '1fr', gap: 16 }}>
+        <div className="card chart-card">
           <div className="card-content">
-            <CandleChart seriesData={series} height={400} />
+            {series.length > 0 ? (
+              <CandleChart seriesData={series} height={320} />
+            ) : (
+              <SparklineChart points={points} height={160} />
+            )}
           </div>
         </div>
-      )}
+        <TradePanel symbol={symbol} price={effectivePrice} />
+      </div>
     </div>
   );
 };
