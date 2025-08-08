@@ -91,12 +91,12 @@ const Dashboard = () => {
       <div className="grid" style={{ marginTop: 16, gridTemplateColumns: '1fr', gap: 16 }}>
         <div className="card chart-card">
           <div className="card-content">
-            {series.length > 0 ? (
-              <CandleChart seriesData={series} height={320} />
-            ) : (
-              <CandleChart seriesData={[]} linePoints={points} height={200} />
-            )}
-          </div>
+                          {series.length > 0 ? (
+                <CandleChart seriesData={series} height={320} />
+              ) : (
+                <SparklineChart points={points} height={200} />
+              )}
+</div>
         </div>
         <TradePanel symbol={symbol} price={effectivePrice} />
       </div>
