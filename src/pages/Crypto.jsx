@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getCryptoQuote } from '../services/crypto';
 import { usePortfolioStore } from '../store/portfolioStore';
+import PageChart from '../components/PageChart';
+import { usePolling } from '../hooks/usePolling';
 
 const DEFAULTS = ['BTC', 'ETH', 'SOL'];
 
@@ -13,6 +15,8 @@ export default function Crypto() {
   const positions = usePortfolioStore((s) => s.positions);
   const id = `CRYPTO-${symbol.toUpperCase()}`;
   const posQty = positions[id]?.quantity || 0;
+
+  const { points } = usePolling(async (sym) => getCryptoQuote(sym), { key: symbol, intervalMs: 8000, maxPoints: 180 });
 
   useEffect(() => {
     let cancelled = false;
@@ -56,6 +60,9 @@ export default function Crypto() {
               <button className="button primary" onClick={onBuy}>Buy</button>
               <button className="button ghost" onClick={onSell}>Sell</button>
             </div>
+          </div>
+          <div style={{ marginTop: 12 }}>
+            <PageChart candleSeries={[]} points={points} height={220} />
           </div>
           <div style={{ color: 'var(--muted)', marginTop: 8 }}>Position: {posQty}</div>
         </div>
