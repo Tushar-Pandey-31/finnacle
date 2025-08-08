@@ -16,11 +16,14 @@ export function useQuoteStream(symbol, { intervalMs = 5000, maxPoints = 300 } = 
     async function tick() {
       try {
         const q = await getQuote(symRef.current);
-        if (cancelled) return;
+        if (cancelled || !q) return;
+        const price = Number(q.c);
+        if (!isFinite(price)) return;
         setLast(q);
         setPoints((prev) => {
-          const next = [...prev, { t: Date.now(), p: Number(q.c) || 0 }];
-          if (next.length > maxPoints) next.splice(0, next.length - maxPoints);
+          const next = [...prev, { t: Date.now(), p: price }];
+          const over = next.length - maxPoints;
+          if (over > 0) next.splice(0, over);
           return next;
         });
       } catch {

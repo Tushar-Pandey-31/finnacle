@@ -8,8 +8,11 @@ export default function CandleChart({ seriesData, linePoints = [], height = 320 
 
   useEffect(() => {
     if (!containerRef.current) return;
-    const chart = createChart(containerRef.current, {
+    const container = containerRef.current;
+    const initialWidth = container.clientWidth || window.innerWidth || 600;
+    const chart = createChart(container, {
       height,
+      width: initialWidth,
       layout: { background: { color: '#fff' }, textColor: '#333' },
       grid: { horzLines: { color: '#f0f3fa' }, vertLines: { color: '#f0f3fa' } },
       crosshair: { mode: CrosshairMode.Normal },
@@ -18,9 +21,9 @@ export default function CandleChart({ seriesData, linePoints = [], height = 320 
     });
     chartRef.current = chart;
     const handleResize = () => {
-      chart.applyOptions({ width: containerRef.current.clientWidth });
+      const w = container.clientWidth || window.innerWidth || 600;
+      chart.applyOptions({ width: w });
     };
-    handleResize();
     window.addEventListener('resize', handleResize);
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -58,7 +61,6 @@ export default function CandleChart({ seriesData, linePoints = [], height = 320 
       if (hasCandles) {
         seriesRef.current.api.setData(seriesData);
       } else if (hasLine) {
-        // convert ms -> seconds for lightweight-charts time
         const lineData = linePoints.map((p) => ({ time: Math.floor(p.t / 1000), value: Number(p.p) || 0 }));
         seriesRef.current.api.setData(lineData);
       }
