@@ -200,4 +200,35 @@ body {
 .ticker-item.pos { color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; }
 .ticker-item.neg { color: #7f1d1d; background: #fef2f2; border: 1px solid #fecaca; }
 .ticker-item.flat { color: #334155; background: #f8fafc; border: 1px solid #e2e8f0; }
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+  .container { padding: 16px 12px; }
+  .card-header { padding: 12px 12px 0 12px; }
+  .card-content { padding: 12px; }
+  .nav { overflow-x: auto; gap: 6px; }
+  .nav a { padding: 8px 10px; font-size: 14px; white-space: nowrap; }
+  .brand { font-size: 18px; }
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table th, .table td { padding: 8px; font-size: 13px; }
+  .ticker { height: 40px; }
+  .header { top: 40px; }
+  .ticker-item { gap: 6px; padding: 4px 10px; }
+  .ticker-item .price { font-size: 13px; }
+  .ticker-item .dp { font-size: 11px; }
+  .controls { gap: 8px; }
+  .controls .input,
+  .controls .select,
+  .controls .button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 12px 8px; }
+  .brand { font-size: 16px; }
+  .kpis { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+  .ticker { height: 36px; }
+  .header { top: 36px; }
+  .nav a { padding: 6px 8px; font-size: 13px; }
+  .kpi-value { font-size: 18px; }
+}
   

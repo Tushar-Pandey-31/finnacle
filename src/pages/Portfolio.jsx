@@ -39,7 +39,7 @@ export default function Portfolio() {
       <div className="card">
         <div className="card-header">Positions</div>
         <div className="card-content">
-          <div className="controls" style={{ marginBottom: 8 }}>
+          <div className="controls" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
             <button className="button ghost" onClick={reset}>Reset</button>
           </div>
           <div className="table-wrap">
