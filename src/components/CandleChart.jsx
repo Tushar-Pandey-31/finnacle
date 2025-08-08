@@ -52,8 +52,11 @@ export default function CandleChart({ seriesData, linePoints = [], height = 320 
         const candle = chart.addCandlestickSeries({ upColor: '#16a34a', downColor: '#ef4444', borderDownColor: '#ef4444', borderUpColor: '#16a34a', wickDownColor: '#ef4444', wickUpColor: '#16a34a' });
         seriesRef.current = { type: 'candle', api: candle };
       } else if (hasLine) {
-        const area = chart.addAreaSeries({ lineColor: '#2563eb', topColor: 'rgba(37,99,235,0.3)', bottomColor: 'rgba(37,99,235,0.0)' });
-        seriesRef.current = { type: 'line', api: area };
+        const supportsArea = typeof chart.addAreaSeries === 'function';
+        const series = supportsArea
+          ? chart.addAreaSeries({ lineColor: '#2563eb', topColor: 'rgba(37,99,235,0.3)', bottomColor: 'rgba(37,99,235,0.0)' })
+          : chart.addLineSeries({ color: '#2563eb', lineWidth: 2 });
+        seriesRef.current = { type: 'line', api: series };
       }
     }
 
