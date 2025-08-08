@@ -1,3 +1,5 @@
+
+
 export const FINNHUB_BASE_URL = (import.meta.env.DEV ? '/fh/api/v1' : 'https://finnhub.io/api/v1');
 
 import axios from 'axios';
