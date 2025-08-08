@@ -1,22 +1,46 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 import '../index.css';
+import { getQuote, getCandles, finnhubCandleToSeries } from '../services/finnhub';
+import CandleChart from '../components/CandleChart';
+
+const ONE_DAY = 24 * 60 * 60;
 
 const Dashboard = () => {
-  const [symbol, setSymbol] = useState('');
+  const [symbol, setSymbol] = useState('AAPL');
   const [stockData, setStockData] = useState(null);
+  const [series, setSeries] = useState([]);
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSearch = async () => {
+  const loadAll = async (sym) => {
+    setLoading(true); setError('');
     try {
-      const response = await axios.get(`http://localhost:5000/api/dashboard?symbols=${symbol}`);
-      console.log(response.data);
-      setStockData(response.data);
-      setError('');
+      const [quote, candles] = await Promise.all([
+        getQuote(sym),
+        getCandles({ symbol: sym, resolution: 'D', from: Math.floor(Date.now() / 1000) - ONE_DAY * 365, to: Math.floor(Date.now() / 1000) }),
+      ]);
+      setStockData(quote);
+      setSeries(finnhubCandleToSeries(candles));
     } catch (err) {
-      setError('Stock not found or API error');
+      setError(err.message || 'API error');
+      setStockData(null);
+      setSeries([]);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const handleSearch = async () => {
+    const sym = symbol.trim().toUpperCase();
+    if (!sym) return;
+    await loadAll(sym);
+  };
+
+  useEffect(() => {
+    // initial load
+    loadAll(symbol);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="dashboard">
@@ -28,19 +52,25 @@ const Dashboard = () => {
           onChange={(e) => setSymbol(e.target.value)}
           placeholder="Enter stock symbol"
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleSearch} disabled={loading}>{loading ? 'Loading…' : 'Search'}</button>
       </div>
 
-      {error && <p>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {stockData && (
         <div className="stock-info">
           <h2>Stock Data for {symbol.toUpperCase()}</h2>
-          <p>Price: {stockData[0].data.c}</p>
-          <p>High: {stockData[0].data.h}</p>
-          <p>Low: {stockData[0].data.l}</p>
-          <p>Open: {stockData[0].data.o}</p>
-          <p>Previous Close: {stockData[0].data.pc}</p>
+          <p>Price: {stockData.c}</p>
+          <p>High: {stockData.h}</p>
+          <p>Low: {stockData.l}</p>
+          <p>Open: {stockData.o}</p>
+          <p>Previous Close: {stockData.pc}</p>
+        </div>
+      )}
+
+      {series.length > 0 && (
+        <div style={{ margin: '24px auto', maxWidth: 960 }}>
+          <CandleChart seriesData={series} height={360} />
         </div>
       )}
     </div>

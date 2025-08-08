@@ -1,6 +1,6 @@
 .dashboard {
     text-align: center;
-    margin-top: 50px;
+    margin-top: 24px;
   }
   
   .search-bar {
@@ -16,6 +16,7 @@
     padding: 10px 20px;
     font-size: 16px;
     margin-left: 10px;
+    cursor: pointer;
   }
   
   .stock-info {
@@ -25,5 +26,18 @@
   .stock-info p {
     font-size: 18px;
     margin: 5px 0;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .table th, .table td {
+    border: 1px solid #eee;
+    padding: 8px;
+    text-align: left;
+  }
+  .table th {
+    background: #f7f7f7;
   }
   
