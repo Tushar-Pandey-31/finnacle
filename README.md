@@ -1,3 +1,6 @@
+#Live
+https://finnacle-beta.vercel.app/
+
 # Finnacle (Paper Trading Frontend)
 
 React + Vite frontend for a paper trading app using Finnhub API (no backend yet).
