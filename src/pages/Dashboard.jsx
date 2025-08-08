@@ -10,21 +10,24 @@ const Dashboard = () => {
   const [stockData, setStockData] = useState(null);
   const [series, setSeries] = useState([]);
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
 
   const loadAll = async (sym) => {
-    setLoading(true); setError('');
+    setLoading(true); setError(''); setInfo('');
     try {
-      const [quote, candles] = await Promise.all([
-        getQuote(sym),
-        getCandles({ symbol: sym, resolution: 'D', from: Math.floor(Date.now() / 1000) - ONE_DAY * 365, to: Math.floor(Date.now() / 1000) }),
-      ]);
+      const quote = await getQuote(sym);
       setStockData(quote);
+    } catch (err) {
+      setError(err.message || 'Quote API error');
+      setStockData(null);
+    }
+    try {
+      const candles = await getCandles({ symbol: sym, resolution: 'D', from: Math.floor(Date.now() / 1000) - ONE_DAY * 365, to: Math.floor(Date.now() / 1000) });
       setSeries(finnhubCandleToSeries(candles));
     } catch (err) {
-      setError(err.message || 'API error');
-      setStockData(null);
       setSeries([]);
+      setInfo('Chart data not available on current plan');
     } finally {
       setLoading(false);
     }
@@ -53,6 +56,7 @@ const Dashboard = () => {
             </div>
           </div>
           {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
+          {info && !error && <p style={{ color: 'var(--muted)' }}>{info}</p>}
           {stockData && (
             <div className="grid grid-cols-2" style={{ marginTop: 12 }}>
               <div className="kpi">
