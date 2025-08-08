@@ -44,15 +44,15 @@ export default function Crypto() {
       <div className="card">
         <div className="card-header">Crypto Market</div>
         <div className="card-content">
-          <div className="controls" style={{ justifyContent: 'space-between' }}>
-            <div className="controls">
+          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8 }}>
               <select className="select" value={symbol} onChange={(e) => setSymbol(e.target.value)}>
                 {DEFAULTS.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
               <div style={{ fontWeight: 800 }}>${price != null ? Number(price).toFixed(2) : '--'}</div>
             </div>
-            <div className="controls">
-              <input className="input" style={{ width: 120 }} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="Qty" />
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8 }}>
+              <input className="input" style={{ width: 160 }} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="Qty" />
               <button className="button primary" onClick={onBuy}>Buy</button>
               <button className="button ghost" onClick={onSell}>Sell</button>
             </div>

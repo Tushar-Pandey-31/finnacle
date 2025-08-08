@@ -56,11 +56,11 @@ const Dashboard = () => {
     <div className="container">
       <div className="card">
         <div className="card-content">
-          <div className="controls" style={{ justifyContent: 'space-between' }}>
+          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <h1 style={{ margin: 0 }}>Stock Dashboard</h1>
-            <div className="controls">
-              <input className="input" type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Enter stock symbol" />
-              <button className="button primary" onClick={handleSearch} disabled={loading}>{loading ? 'Loading…' : 'Search'}</button>
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8, flex: '1 1 320px', justifyContent: 'flex-end' }}>
+              <input className="input" type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Enter stock symbol" style={{ flex: '1 1 200px', minWidth: 160 }} />
+              <button className="button primary" onClick={handleSearch} disabled={loading} style={{ flex: '0 0 auto' }}>{loading ? 'Loading…' : 'Search'}</button>
             </div>
           </div>
           {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}

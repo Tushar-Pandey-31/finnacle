@@ -61,13 +61,13 @@ export default function Options() {
     <div className="container">
       <div className="card">
         <div className="card-content">
-          <div className="controls" style={{ justifyContent: 'space-between' }}>
+          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
             <h2 style={{ margin: 0 }}>Options</h2>
-            <div className="controls">
-              <input className="input" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol e.g. AAPL" />
-              <button className="button primary" onClick={handleFetch} disabled={loading}>{loading ? 'Loading…' : 'Fetch Chain'}</button>
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8, flex: '1 1 360px', justifyContent: 'flex-end' }}>
+              <input className="input" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Symbol e.g. AAPL" style={{ flex: '1 1 200px', minWidth: 140 }} />
+              <button className="button primary" onClick={handleFetch} disabled={loading} style={{ flex: '0 0 auto' }}>{loading ? 'Loading…' : 'Fetch Chain'}</button>
               {expirations.length > 0 && (
-                <select className="select" value={expiry} onChange={(e) => setExpiry(e.target.value)}>
+                <select className="select" value={expiry} onChange={(e) => setExpiry(e.target.value)} style={{ flex: '0 0 auto' }}>
                   <option value="">All expirations</option>
                   {expirations.map((d) => <option key={d} value={d}>{d}</option>)}
                 </select>

@@ -44,15 +44,15 @@ export default function Forex() {
       <div className="card">
         <div className="card-header">Forex Market</div>
         <div className="card-content">
-          <div className="controls" style={{ justifyContent: 'space-between' }}>
-            <div className="controls">
+          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8 }}>
               <select className="select" value={pair} onChange={(e) => setPair(e.target.value)}>
                 {PAIRS.map((p) => <option key={p} value={p}>{p}</option>)}
               </select>
               <div style={{ fontWeight: 800 }}>{rate != null ? Number(rate).toFixed(5) : '--'}</div>
             </div>
-            <div className="controls">
-              <input className="input" style={{ width: 140 }} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="Qty (base units)" />
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8 }}>
+              <input className="input" style={{ width: 180 }} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="Qty (base units)" />
               <button className="button primary" onClick={onBuy}>Buy</button>
               <button className="button ghost" onClick={onSell}>Sell</button>
             </div>
