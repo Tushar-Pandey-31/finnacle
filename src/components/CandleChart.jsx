@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { createChart, CrosshairMode } from 'lightweight-charts';
 
-export default function CandleChart({ seriesData, linePoints = [], height = 320 }) {
+export default function CandleChart({ seriesData, height = 320 }) {
   const containerRef = useRef(null);
   const chartRef = useRef(null);
-  const seriesRef = useRef({ type: null, api: null });
+  const seriesRef = useRef(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -29,46 +29,24 @@ export default function CandleChart({ seriesData, linePoints = [], height = 320 
       window.removeEventListener('resize', handleResize);
       chart.remove();
       chartRef.current = null;
-      seriesRef.current = { type: null, api: null };
+      seriesRef.current = null;
     };
   }, [height]);
 
   useEffect(() => {
     const chart = chartRef.current;
     if (!chart) return;
+    if (!Array.isArray(seriesData) || seriesData.length === 0) return;
 
-    const hasCandles = Array.isArray(seriesData) && seriesData.length > 0;
-    const hasLine = Array.isArray(linePoints) && linePoints.length > 1;
-
-    const current = seriesRef.current;
-    const needsCandle = hasCandles && current.type !== 'candle';
-    const needsLine = !hasCandles && hasLine && current.type !== 'line';
-
-    if (needsCandle || needsLine) {
-      if (current.api) {
-        chart.removeSeries(current.api);
-      }
-      if (hasCandles) {
-        const candle = chart.addCandlestickSeries({ upColor: '#16a34a', downColor: '#ef4444', borderDownColor: '#ef4444', borderUpColor: '#16a34a', wickDownColor: '#ef4444', wickUpColor: '#16a34a' });
-        seriesRef.current = { type: 'candle', api: candle };
-      } else if (hasLine) {
-        const supportsArea = typeof chart.addAreaSeries === 'function';
-        const series = supportsArea
-          ? chart.addAreaSeries({ lineColor: '#2563eb', topColor: 'rgba(37,99,235,0.3)', bottomColor: 'rgba(37,99,235,0.0)' })
-          : chart.addLineSeries({ color: '#2563eb', lineWidth: 2 });
-        seriesRef.current = { type: 'line', api: series };
-      }
+    if (!seriesRef.current) {
+      seriesRef.current = chart.addCandlestickSeries({ upColor: '#16a34a', downColor: '#ef4444', borderDownColor: '#ef4444', borderUpColor: '#16a34a', wickDownColor: '#ef4444', wickUpColor: '#16a34a' });
     }
+    seriesRef.current.setData(seriesData);
+  }, [seriesData]);
 
-    if (seriesRef.current.api) {
-      if (hasCandles) {
-        seriesRef.current.api.setData(seriesData);
-      } else if (hasLine) {
-        const lineData = linePoints.map((p) => ({ time: Math.floor(p.t / 1000), value: Number(p.p) || 0 }));
-        seriesRef.current.api.setData(lineData);
-      }
-    }
-  }, [seriesData, linePoints]);
+  if (!Array.isArray(seriesData) || seriesData.length === 0) {
+    return null;
+  }
 
   return (
     <div ref={containerRef} style={{ width: '100%', height }} />
