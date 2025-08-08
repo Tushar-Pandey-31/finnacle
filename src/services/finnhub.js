@@ -1,4 +1,4 @@
-export const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
+export const FINNHUB_BASE_URL = (import.meta.env.DEV ? '/fh/api/v1' : 'https://finnhub.io/api/v1');
 
 import axios from 'axios';
 
@@ -40,10 +40,13 @@ export async function searchSymbols(query) {
 
 export async function getOptionChain(symbol) {
   requireToken();
+  // Finnhub option chain API endpoint
   const { data } = await http.get('/stock/option/chain', {
     params: { symbol, token: apiToken },
+    maxRedirects: 0,
+    validateStatus: (s) => s >= 200 && s < 400,
   });
-  return data; // shape depends on API; handle defensively in UI
+  return data;
 }
 
 export function finnhubCandleToSeries(candleResponse) {
