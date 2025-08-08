@@ -93,7 +93,7 @@ const Dashboard = () => {
             {series.length > 0 ? (
               <CandleChart seriesData={series} height={320} />
             ) : (
-              <SparklineChart points={points} height={160} />
+              <CandleChart seriesData={[]} linePoints={points} height={200} />
             )}
           </div>
         </div>
