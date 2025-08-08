@@ -49,7 +49,8 @@ const Dashboard = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const effectivePrice = stockData?.c ?? last?.c ?? points.at(-1)?.p;
+  const lastPoint = points && points.length ? points[points.length - 1] : null;
+  const effectivePrice = stockData?.c ?? last?.c ?? lastPoint?.p;
 
   return (
     <div className="container">
