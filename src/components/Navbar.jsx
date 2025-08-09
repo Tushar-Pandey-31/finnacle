@@ -32,7 +32,7 @@ export default function Navbar() {
 
   return (
     <header className="header">
-      <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingTop: 12, paddingBottom: 12 }}>
+      <div className="container nav-inner">
         <div className="brand">Finnacle</div>
         {/* Desktop nav (large screens only) */}
         {!isAuthPage && (
@@ -47,7 +47,9 @@ export default function Navbar() {
           </button>
         )}
       </div>
-      {open && (
+
+      {/* Mobile sidebar */}
+      {open && !isAuthPage && (
         <div className="mobile-sidebar-overlay" onClick={() => setOpen(false)}>
           <div className="mobile-sidebar" onClick={(e) => e.stopPropagation()}>
             <NavItems onNavigate={() => setOpen(false)} />
