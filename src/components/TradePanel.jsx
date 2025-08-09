@@ -40,13 +40,23 @@ export default function TradePanel({ symbol, price }) {
     <div className="card">
       <div className="card-header">Trade {id || ''}</div>
       <div className="card-content">
-        <div className="controls" style={{ marginBottom: 8 }}>
-          <input className="input" style={{ width: 100 }} value={qty} onChange={(e) => setQty(e.target.value)} placeholder="Qty" />
-          <input className="input" style={{ width: 140 }} value={limit} onChange={(e) => setLimit(e.target.value)} placeholder={`Limit (mkt ${price || '-'})`} />
+        <div className="trade-controls" style={{ marginBottom: 8 }}>
+          <input 
+            className="input input-qty" 
+            value={qty} 
+            onChange={(e) => setQty(e.target.value)} 
+            placeholder="Qty" 
+          />
+          <input 
+            className="input input-limit" 
+            value={limit} 
+            onChange={(e) => setLimit(e.target.value)} 
+            placeholder={`Limit (mkt ${price || '-'})`} 
+          />
           <button className="button primary" onClick={onBuy}>Buy</button>
           <button className="button ghost" onClick={onSell}>Sell</button>
         </div>
-        <div style={{ color: 'var(--muted)' }}>
+        <div className="trade-info">
           Est. {limit ? 'limit' : 'mkt'} {usePrice ? `$${usePrice.toFixed(2)}` : '-'} • Cost: ${estCost.toFixed(2)} • Position: {posQty}
         </div>
       </div>

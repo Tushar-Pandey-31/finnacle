@@ -56,11 +56,25 @@ const Dashboard = () => {
     <div className="container">
       <div className="card">
         <div className="card-content">
-          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-            <h1 style={{ margin: 0 }}>Stock Dashboard</h1>
-            <div className="controls" style={{ flexWrap: 'wrap', gap: 8, flex: '1 1 320px', justifyContent: 'flex-end' }}>
-              <input className="input" type="text" value={symbol} onChange={(e) => setSymbol(e.target.value)} placeholder="Enter stock symbol" style={{ flex: '1 1 200px', minWidth: 160 }} />
-              <button className="button primary" onClick={handleSearch} disabled={loading} style={{ flex: '0 0 auto' }}>{loading ? 'Loading…' : 'Search'}</button>
+          <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start' }}>
+            <h1 style={{ margin: 0, flex: '0 0 auto' }}>Stock Dashboard</h1>
+            <div className="controls" style={{ flexWrap: 'wrap', gap: 8, flex: '1 1 320px', justifyContent: 'flex-end', minWidth: 0 }}>
+              <input 
+                className="input" 
+                type="text" 
+                value={symbol} 
+                onChange={(e) => setSymbol(e.target.value)} 
+                placeholder="Enter stock symbol" 
+                style={{ flex: '1 1 160px', minWidth: 120, maxWidth: 200 }} 
+              />
+              <button 
+                className="button primary" 
+                onClick={handleSearch} 
+                disabled={loading} 
+                style={{ flex: '0 0 auto', minWidth: 80 }}
+              >
+                {loading ? 'Loading…' : 'Search'}
+              </button>
             </div>
           </div>
           {error && <p style={{ color: 'var(--danger)' }}>{error}</p>}
@@ -88,15 +102,15 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid" style={{ marginTop: 16, gridTemplateColumns: '1fr', gap: 16 }}>
+      <div className="grid dashboard-grid" style={{ marginTop: 16, gap: 16 }}>
         <div className="card chart-card">
           <div className="card-content">
-                          {series.length > 0 ? (
-                <CandleChart seriesData={series} height={320} />
-              ) : (
-                <SparklineChart points={points} height={200} />
-              )}
-</div>
+            {series.length > 0 ? (
+              <CandleChart seriesData={series} height={320} />
+            ) : (
+              <SparklineChart points={points} height={200} />
+            )}
+          </div>
         </div>
         <TradePanel symbol={symbol} price={effectivePrice} />
       </div>

@@ -29,6 +29,7 @@ body {
 .main { flex: 1 0 auto; }
 .footer { flex-shrink: 0; }
 
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -58,6 +59,7 @@ body {
   letter-spacing: 0.3px;
 }
 
+
 /* Desktop nav class support for both variations */
 .desktop-nav, .nav-desktop {
   display: none;
@@ -67,6 +69,8 @@ body {
   .desktop-nav, .nav-desktop { display: flex; }
 }
 .desktop-nav a, .nav-desktop a {
+
+
   padding: 10px 14px;
   text-decoration: none;
   color: var(--muted);
@@ -74,7 +78,7 @@ body {
   font-weight: 600;
   white-space: nowrap;
 }
-.desktop-nav a.active, .nav-desktop a.active {
+
   color: var(--text);
   background: #eef2ff;
 }
@@ -121,6 +125,7 @@ body {
   gap: 8px;
   align-items: stretch;
 }
+
 
 @media (max-width: 640px) {
   .controls-mobile-stack {
@@ -252,7 +257,6 @@ body {
   word-break: break-word;
 }
 
-/* Ticker */
 .ticker {
   position: sticky;
   top: 0;
@@ -321,8 +325,12 @@ body {
   .ticker-track { overflow-x: auto; display: inline-flex; }
 }
 
+
 /* Mobile responsive styles */
 @media (max-width: 900px) {
+  .nav-desktop { display: none; }
+  .mobile-nav-toggle { display: inline-flex; }
+  
   .container { padding: 16px 12px; }
   .card-header { padding: 12px 12px 0 12px; }
   .card-content { padding: 12px; }
@@ -365,6 +373,15 @@ body {
   /* Ensure chart containers don't overflow */
   .chart-card { padding: 4px; }
   .chart-container { min-height: 200px; }
+  
+  /* Ensure chart containers don't overflow */
+  .chart-card {
+    padding: 4px;
+  }
+  
+  .chart-container {
+    min-height: 200px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -385,5 +402,12 @@ body {
   width: 40px;
   margin-right: 10px;
   border-radius: 50%; 
-}
+
   
+/* Logo styles */
+.logo {
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+  border-radius: 50%; 
+}
