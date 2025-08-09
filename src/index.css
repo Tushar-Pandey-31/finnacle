@@ -232,3 +232,11 @@ body {
   .kpi-value { font-size: 18px; }
 }
   
+/* src/App.css or your Navbar's CSS file */
+.logo {
+  height: 40px; /* Adjust the size as needed */
+  width: 40px;  /* Make the width and height the same */
+  margin-right: 10px;
+  /* Add this line to make the image circular */
+  border-radius: 50%; 
+}
