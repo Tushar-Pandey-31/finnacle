@@ -22,7 +22,13 @@ body {
   background: linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
   font-size: 14px;
   line-height: 1.5;
+  overflow-x: hidden;
 }
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+.main { flex: 1 0 auto; }
+.footer { flex-shrink: 0; }
+
 
 .container {
   max-width: 1200px;
@@ -53,12 +59,18 @@ body {
   letter-spacing: 0.3px;
 }
 
-.nav-desktop {
-  display: flex;
+
+/* Desktop nav class support for both variations */
+.desktop-nav, .nav-desktop {
+  display: none;
   gap: 8px;
 }
+@media (min-width: 901px) {
+  .desktop-nav, .nav-desktop { display: flex; }
+}
+.desktop-nav a, .nav-desktop a {
 
-.nav-desktop a {
+
   padding: 10px 14px;
   text-decoration: none;
   color: var(--muted);
@@ -67,7 +79,6 @@ body {
   white-space: nowrap;
 }
 
-.nav-desktop a.active {
   color: var(--text);
   background: #eef2ff;
 }
@@ -114,6 +125,7 @@ body {
   gap: 8px;
   align-items: stretch;
 }
+
 
 @media (max-width: 640px) {
   .controls-mobile-stack {
@@ -268,6 +280,7 @@ body {
   gap: 12px;
   animation: tickerScroll 30s linear infinite;
   will-change: transform;
+  max-width: 100%;
 }
 @keyframes tickerScroll {
   0% { transform: translateX(0); }
@@ -298,6 +311,21 @@ body {
 .mobile-sidebar { position: fixed; top: 0; right: 0; height: 100%; width: 260px; background: #fff; box-shadow: -10px 0 30px rgba(0,0,0,0.08); padding: 16px; z-index: 60; display: flex; flex-direction: column; gap: 8px; }
 .mobile-sidebar a, .mobile-sidebar button { text-align: left; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--border); background: #fff; font-weight: 600; }
 
+/* Desktop-only: hide mobile toggle */
+@media (min-width: 901px) {
+  .mobile-nav-toggle { display: none; }
+}
+
+/* Mobile-only enhancements */
+@media (max-width: 900px) {
+  .mobile-nav-toggle { display: inline-flex; }
+  .mobile-sidebar a, .mobile-sidebar button { min-height: 44px; }
+  .ticker { height: 40px; }
+  .header { top: 40px; }
+  .ticker-track { overflow-x: auto; display: inline-flex; }
+}
+
+
 /* Mobile responsive styles */
 @media (max-width: 900px) {
   .nav-desktop { display: none; }
@@ -306,14 +334,10 @@ body {
   .container { padding: 16px 12px; }
   .card-header { padding: 12px 12px 0 12px; }
   .card-content { padding: 12px; }
-  
-  .nav-desktop { overflow-x: auto; gap: 6px; }
-  .nav-desktop a { padding: 8px 10px; font-size: 14px; white-space: nowrap; }
+
   .brand { font-size: 18px; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .table th, .table td { padding: 8px; font-size: 13px; }
-  .ticker { height: 40px; }
-  .header { top: 40px; }
   .ticker-item { gap: 6px; padding: 4px 10px; }
   .ticker-item .price { font-size: 13px; }
   .ticker-item .dp { font-size: 11px; }
@@ -325,26 +349,30 @@ body {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .trade-controls .input-qty,
   .trade-controls .input-limit,
   .trade-controls .button {
     width: 100%;
     flex: none;
   }
-  
+
   /* Make dashboard header controls stack better */
   .controls {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .controls .input,
   .controls .select,
   .controls .button {
     width: 100%;
     flex: none;
   }
+
+  /* Ensure chart containers don't overflow */
+  .chart-card { padding: 4px; }
+  .chart-container { min-height: 200px; }
   
   /* Ensure chart containers don't overflow */
   .chart-card {
@@ -362,17 +390,19 @@ body {
   .kpis { grid-template-columns: repeat(1, minmax(0, 1fr)); }
   .ticker { height: 36px; }
   .header { top: 36px; }
-  .nav-desktop a { padding: 6px 8px; font-size: 13px; }
   .kpi-value { font-size: 18px; }
-  
-  .trade-info {
-    font-size: 13px;
-  }
-  
-  .chart-container {
-    min-height: 180px;
-  }
+
+  .trade-info { font-size: 13px; }
+  .chart-container { min-height: 180px; }
 }
+
+/* Logo styles */
+.logo {
+  height: 40px;
+  width: 40px;
+  margin-right: 10px;
+  border-radius: 50%; 
+
   
 /* Logo styles */
 .logo {
