@@ -10,6 +10,7 @@ import Register from './pages/Register';
 import MyPortfolio from './pages/MyPortfolio';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path="/my-portfolio" element={<MyPortfolio />} />
         </Route>
       </Routes>
+      <Footer />
     </Router>
   );
 }
