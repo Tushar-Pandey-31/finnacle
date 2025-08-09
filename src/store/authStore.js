@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { loginUser, registerUser, setAuthToken } from '../services/backend';
+import { loginUser, registerUser, setAuthToken, logoutUser } from '../services/backend';
 
 export const useAuthStore = create(
   persist(
@@ -34,7 +34,8 @@ export const useAuthStore = create(
           return false;
         }
       },
-      logout() {
+      async logout() {
+        try { await logoutUser(); } catch {}
         setAuthToken(null);
         set({ token: null, email: null });
       },
