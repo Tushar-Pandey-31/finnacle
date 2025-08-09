@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 export default function Login() {
@@ -7,8 +8,11 @@ export default function Login() {
   const login = useAuthStore((s) => s.login);
   const error = useAuthStore((s) => s.error);
   const init = useAuthStore((s) => s.init);
+  const token = useAuthStore((s) => s.token);
+  const navigate = useNavigate();
 
   useEffect(() => { init(); }, [init]);
+  useEffect(() => { if (token) navigate('/'); }, [token, navigate]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -25,6 +29,9 @@ export default function Login() {
             <input className="input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
             <button className="button primary" type="submit">Login</button>
             {error && <div style={{ color: 'var(--danger)' }}>{error}</div>}
+            <div style={{ color: 'var(--muted)' }}>
+              New user? <Link to="/register">Create an account</Link>
+            </div>
           </form>
         </div>
       </div>
