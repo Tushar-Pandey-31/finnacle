@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/authStore';
 
 export default function Navbar() {
@@ -8,6 +8,12 @@ export default function Navbar() {
   const token = useAuthStore((s) => s.token);
   const logout = useAuthStore((s) => s.logout);
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const original = document.body.style.overflow;
+    if (open) document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = original; };
+  }, [open]);
 
   const isAuthPage = current === '/login' || current === '/register';
 
