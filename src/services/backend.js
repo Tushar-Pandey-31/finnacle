@@ -1,0 +1,35 @@
+import axios from 'axios';
+
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://finnacle-backend.onrender.com';
+
+export const backend = axios.create({ baseURL: BASE_URL });
+
+export function setAuthToken(token) {
+  if (token) backend.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  else delete backend.defaults.headers.common['Authorization'];
+}
+
+export async function registerUser({ email, password }) {
+  const { data } = await backend.post('/api/auth/register', { email, password });
+  return data;
+}
+
+export async function loginUser({ email, password }) {
+  const { data } = await backend.post('/api/auth/login', { email, password });
+  return data; // expected { token, ... }
+}
+
+export async function createPortfolio({ name }) {
+  const { data } = await backend.post('/api/portfolio', { name });
+  return data;
+}
+
+export async function addHolding({ portfolioId, symbol, quantity }) {
+  const { data } = await backend.post(`/api/portfolio/${portfolioId}/add`, { symbol, quantity });
+  return data;
+}
+
+export async function getHoldings({ portfolioId }) {
+  const { data } = await backend.get(`/api/portfolio/${portfolioId}/holdings`);
+  return data;
+}

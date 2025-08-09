@@ -14,6 +14,8 @@ export default function Navbar() {
           <Link to="/derivatives" className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
           <Link to="/options" className={current === '/options' ? 'active' : ''}>Options</Link>
           <Link to="/portfolio" className={current === '/portfolio' ? 'active' : ''}>Portfolio</Link>
+          <Link to="/login" className={current === '/login' ? 'active' : ''}>Login</Link>
+          <Link to="/register" className={current === '/register' ? 'active' : ''}>Register</Link>
         </nav>
       </div>
     </header>
