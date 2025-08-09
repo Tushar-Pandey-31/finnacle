@@ -1,22 +1,38 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 
 export default function SparklineChart({ points, height = 120, color = '#2563eb' }) {
   const canvasRef = useRef(null);
+  const containerRef = useRef(null);
 
-  useEffect(() => {
+  const drawChart = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!canvas || !container) return;
+    
     const dpr = window.devicePixelRatio || 1;
-    const width = canvas.parentElement?.clientWidth || 600;
+    const containerRect = container.getBoundingClientRect();
+    const width = containerRect.width || container.clientWidth || 600;
+    
+    // Set canvas size
     canvas.width = width * dpr;
     canvas.height = height * dpr;
     canvas.style.width = width + 'px';
     canvas.style.height = height + 'px';
+    
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
-
     ctx.clearRect(0, 0, width, height);
-    if (!points || points.length < 2) return;
+    
+    if (!points || points.length < 2) {
+      // Draw placeholder when no data
+      ctx.fillStyle = '#f1f5f9';
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = '#64748b';
+      ctx.font = '14px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('No data available', width / 2, height / 2);
+      return;
+    }
 
     const xs = points.map((p) => p.t);
     const ys = points.map((p) => p.p);
@@ -60,18 +76,40 @@ export default function SparklineChart({ points, height = 120, color = '#2563eb'
   }, [points, height, color]);
 
   useEffect(() => {
-    const handle = () => {
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-      // Re-render by nudging a ref; dependency on points will re-run
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        // noop to trigger useEffect
-      }
-    };
-    window.addEventListener('resize', handle);
-    return () => window.removeEventListener('resize', handle);
-  }, []);
+    drawChart();
+  }, [drawChart]);
 
-  return <canvas ref={canvasRef} />;
+  useEffect(() => {
+    const handleResize = () => {
+      // Small delay to ensure container has updated dimensions
+      setTimeout(drawChart, 10);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [drawChart]);
+
+  // Use ResizeObserver if available for better container resize detection
+  useEffect(() => {
+    if (!window.ResizeObserver) return;
+    
+    const container = containerRef.current;
+    if (!container) return;
+    
+    const resizeObserver = new ResizeObserver(() => {
+      drawChart();
+    });
+    
+    resizeObserver.observe(container);
+    
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [drawChart]);
+
+  return (
+    <div ref={containerRef} className="chart-container" style={{ height: height + 'px' }}>
+      <canvas ref={canvasRef} />
+    </div>
+  );
 }
