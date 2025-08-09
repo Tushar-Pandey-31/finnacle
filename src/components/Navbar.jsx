@@ -11,7 +11,7 @@ export default function Navbar() {
 
   const isAuthPage = current === '/login' || current === '/register';
 
-  const NavItems = ({ onNavigate }) => (
+  const MobileNavItems = ({ onNavigate }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <Link to="/" onClick={() => onNavigate?.()} className={current === '/' ? 'active' : ''}>Dashboard</Link>
       <Link to="/crypto" onClick={() => onNavigate?.()} className={current === '/crypto' ? 'active' : ''}>Crypto</Link>
@@ -34,16 +34,35 @@ export default function Navbar() {
     <header className="header">
       <div className="container nav-inner">
         <div className="brand">Finnacle</div>
+        
         {/* Desktop nav (large screens only) */}
         {!isAuthPage && (
           <nav className="desktop-nav">
-            <NavItems />
+            <Link to="/" className={current === '/' ? 'active' : ''}>Dashboard</Link>
+            <Link to="/crypto" className={current === '/crypto' ? 'active' : ''}>Crypto</Link>
+            <Link to="/forex" className={current === '/forex' ? 'active' : ''}>Forex</Link>
+            <Link to="/derivatives" className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
+            <Link to="/options" className={current === '/options' ? 'active' : ''}>Options</Link>
+            <Link to="/portfolio" className={current === '/portfolio' ? 'active' : ''}>Portfolio</Link>
+            {!token ? (
+              <>
+                <Link to="/login" className={current === '/login' ? 'active' : ''}>Login</Link>
+                <Link to="/register" className={current === '/register' ? 'active' : ''}>Register</Link>
+              </>
+            ) : (
+              <button className="button ghost" onClick={logout}>Logout</button>
+            )}
           </nav>
         )}
+        
         {/* Mobile toggle (small screens) */}
         {!isAuthPage && (
           <button className="mobile-nav-toggle" onClick={() => setOpen(true)} aria-label="Open menu">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
           </button>
         )}
       </div>
@@ -52,7 +71,7 @@ export default function Navbar() {
       {open && !isAuthPage && (
         <div className="mobile-sidebar-overlay" onClick={() => setOpen(false)}>
           <div className="mobile-sidebar" onClick={(e) => e.stopPropagation()}>
-            <NavItems onNavigate={() => setOpen(false)} />
+            <MobileNavItems onNavigate={() => setOpen(false)} />
           </div>
         </div>
       )}
