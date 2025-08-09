@@ -9,21 +9,25 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MyPortfolio from './pages/MyPortfolio';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/crypto" element={<Crypto />} />
-        <Route path="/forex" element={<Forex />} />
-        <Route path="/derivatives" element={<Derivatives />} />
-        <Route path="/options" element={<Options />} />
-        <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/my-portfolio" element={<MyPortfolio />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/crypto" element={<Crypto />} />
+          <Route path="/forex" element={<Forex />} />
+          <Route path="/derivatives" element={<Derivatives />} />
+          <Route path="/options" element={<Options />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/my-portfolio" element={<MyPortfolio />} />
+        </Route>
       </Routes>
     </Router>
   );
