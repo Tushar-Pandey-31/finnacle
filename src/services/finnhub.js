@@ -1,6 +1,4 @@
-
-
-export const FINNHUB_BASE_URL = (import.meta.env.DEV ? '/fh/api/v1' : 'https://finnhub.io/api/v1');
+export const FINNHUB_BASE_URL = (import.meta.env.DEV ? '/fh/api/v1' : '');
 
 import axios from 'axios';
 
@@ -11,12 +9,17 @@ const http = axios.create({
 });
 
 function requireToken() {
-  if (!apiToken) {
+  if (!apiToken && import.meta.env.DEV) {
     throw new Error('Missing VITE_FINNHUB_API_KEY. Set it in your .env file.');
   }
 }
 
 export async function getQuote(symbol) {
+  if (!import.meta.env.DEV) {
+    // use serverless proxy in production
+    const { data } = await axios.get('/api/finnhub/quote', { params: { symbol } });
+    return data;
+  }
   requireToken();
   const { data } = await http.get('/quote', {
     params: { symbol, token: apiToken },
