@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
 export default function Register() {
@@ -25,6 +26,9 @@ export default function Register() {
             <button className="button primary" type="submit">Create Account</button>
             {ok && <div style={{ color: 'var(--accent)' }}>Registered successfully. You can login now.</div>}
             {error && <div style={{ color: 'var(--danger)' }}>{error}</div>}
+            <div style={{ color: 'var(--muted)' }}>
+              Already registered? <Link to="/login">Login</Link>
+            </div>
           </form>
         </div>
       </div>
