@@ -19,6 +19,16 @@ export async function loginUser({ email, password }) {
   return data; // expected { token, ... }
 }
 
+export async function logoutUser() {
+  try {
+    const { data } = await backend.post('/api/auth/logout');
+    return data;
+  } catch (e) {
+    // swallow errors to ensure client can still clear token
+    return null;
+  }
+}
+
 export async function createPortfolio({ name }) {
   const { data } = await backend.post('/api/portfolio', { name });
   return data;
