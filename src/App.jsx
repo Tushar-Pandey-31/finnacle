@@ -15,22 +15,26 @@ import Footer from './components/Footer';
 function App() {
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+      <div className="app">
+        <Navbar />
+        <div className="main">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/crypto" element={<Crypto />} />
-          <Route path="/forex" element={<Forex />} />
-          <Route path="/derivatives" element={<Derivatives />} />
-          <Route path="/options" element={<Options />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/my-portfolio" element={<MyPortfolio />} />
-        </Route>
-      </Routes>
-      <Footer />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/crypto" element={<Crypto />} />
+              <Route path="/forex" element={<Forex />} />
+              <Route path="/derivatives" element={<Derivatives />} />
+              <Route path="/options" element={<Options />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/my-portfolio" element={<MyPortfolio />} />
+            </Route>
+          </Routes>
+        </div>
+        <Footer />
+      </div>
     </Router>
   );
 }
