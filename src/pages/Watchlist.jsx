@@ -4,7 +4,7 @@ import { getWatchlist, addWatchlist, removeWatchlist } from "../services/watchli
 import { getQuote as getUsQuote } from "../services/finnhub";
 import { getCryptoQuote } from "../services/crypto";
 import { getFxPair } from "../services/forex";
-import backend from "../services/backend";
+import { backend } from "../services/backend";
 
 
 
@@ -89,11 +89,11 @@ export default function Watchlist() {
                     result[`${it.marketType}:${it.symbol}`] = null;
                 }
             }
-                if (cancelled) setQuotes(result);        
+                if (!cancelled) setQuotes(result);        
             }
             if(items.length) fetchQuotes();
             const t = setInterval(fetchQuotes, 15000);
-            return () => {cancelled = true; clearInterval(t);};
+            return () => {cancelled = true; clearInterval(t)};
         
      }, [items]);
 

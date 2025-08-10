@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
+import { getQuote } from '../services/finnhub';
 
 export default function Portfolio() {
   const cash = usePortfolioStore((s) => s.cash);
@@ -14,6 +15,27 @@ export default function Portfolio() {
 
   const totalValue = rows.reduce((sum, p) => sum + (marks[p.id] || p.avgPrice) * p.quantity, 0);
   const equity = cash + totalValue;
+
+  // Periodically refresh mark prices for live P&L
+  useEffect(() => {
+    let cancelled = false;
+    async function refresh() {
+      const next = {};
+      for (const p of rows) {
+        try {
+          const q = await getQuote(p.symbol);
+          const price = Number(q?.c);
+          if (isFinite(price)) next[p.id] = price;
+        } catch {}
+      }
+      if (!cancelled) setMarks((m) => ({ ...m, ...next }));
+    }
+    if (rows.length) {
+      refresh();
+      const t = setInterval(refresh, 15000);
+      return () => { cancelled = true; clearInterval(t); };
+    }
+  }, [rows]);
 
   function handleClose(p) {
     const qtyStr = prompt(`Quantity to sell (max ${p.quantity}):`, String(p.quantity));
