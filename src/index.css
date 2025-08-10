@@ -69,8 +69,6 @@ body {
   .desktop-nav, .nav-desktop { display: flex; }
 }
 .desktop-nav a, .nav-desktop a {
-
-
   padding: 10px 14px;
   text-decoration: none;
   color: var(--muted);
@@ -79,9 +77,8 @@ body {
   white-space: nowrap;
 }
 
-  color: var(--text);
-  background: #eef2ff;
-}
+
+
 
 .grid {
   display: grid;
@@ -403,11 +400,4 @@ body {
   margin-right: 10px;
   border-radius: 50%; 
 
-  
-/* Logo styles */
-.logo {
-  height: 40px;
-  width: 40px;
-  margin-right: 10px;
-  border-radius: 50%; 
 }

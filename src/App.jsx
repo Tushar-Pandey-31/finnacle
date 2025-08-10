@@ -11,6 +11,7 @@ import MyPortfolio from './pages/MyPortfolio';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
+import Watchlist from './pages/Watchlist';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
               <Route path="/options" element={<Options />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/my-portfolio" element={<MyPortfolio />} />
+              <Route path="/watchlist" element={<Watchlist/>} ></Route>
             </Route>
           </Routes>
         </div>
