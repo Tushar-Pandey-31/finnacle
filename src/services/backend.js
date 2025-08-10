@@ -43,3 +43,10 @@ export async function getHoldings({ portfolioId }) {
   const { data } = await backend.get(`/api/portfolio/${portfolioId}/holdings`);
   return data;
 }
+
+// AI analysis
+export async function analyzePortfolio({ portfolioId, holdings }) {
+  return backend
+    .post('/api/ai/analyze-portfolio', { portfolioId, holdings })
+    .then((r) => r.data);
+}
