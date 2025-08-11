@@ -51,7 +51,6 @@ export default function Navbar() {
             <Link to="/derivatives" className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
             <Link to="/options" className={current === '/options' ? 'active' : ''}>Options</Link>
             <Link to="/portfolio" className={current === '/portfolio' ? 'active' : ''}>Portfolio</Link>
-            <Link to="/my-portfolio" className={current === '/my-portfolio' ? 'active' : ''}>My Portfolio</Link>
             <Link to="/watchlist" className={current === '/watchlist' ? 'active' : ''}>Watchlist</Link>
             {!token ? (
               <>
