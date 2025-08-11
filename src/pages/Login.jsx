@@ -7,6 +7,7 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const login = useAuthStore((s) => s.login);
   const error = useAuthStore((s) => s.error);
+  const setError = useAuthStore.setState;
   const init = useAuthStore((s) => s.init);
   const token = useAuthStore((s) => s.token);
   const navigate = useNavigate();
@@ -16,7 +17,17 @@ export default function Login() {
 
   async function onSubmit(e) {
     e.preventDefault();
-    await login({ email, password });
+    try {
+      await login({ email, password });
+    } catch (e) {
+      const status = e?.response?.status;
+      const message = e?.response?.data?.error || e.message;
+      if (status === 403 && message === 'Please verify your email before logging in.') {
+        setError({ error: message });
+      } else {
+        setError({ error: message || 'Login failed' });
+      }
+    }
   }
 
   return (

@@ -12,6 +12,7 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import Watchlist from './pages/Watchlist';
+import VerifyEmail from './pages/VerifyEmail';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verify-email" element={<VerifyEmail />} />
 
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Dashboard />} />
