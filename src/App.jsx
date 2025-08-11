@@ -4,6 +4,7 @@ import Options from './pages/Options';
 import Derivatives from './pages/Derivatives';
 import Crypto from './pages/Crypto';
 import Forex from './pages/Forex';
+import Portfolio from './pages/Portfolio';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import MyPortfolio from './pages/MyPortfolio';
@@ -28,7 +29,7 @@ function App() {
               <Route path="/forex" element={<Forex />} />
               <Route path="/derivatives" element={<Derivatives />} />
               <Route path="/options" element={<Options />} />
-              <Route path="/portfolio" element={<MyPortfolio />} />
+              <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/my-portfolio" element={<MyPortfolio />} />
               <Route path="/watchlist" element={<Watchlist/>} ></Route>
             </Route>
