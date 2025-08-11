@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { getQuote } from '../services/finnhub';
+import { analyzePortfolio } from '../services/backend';
 
 export default function Portfolio() {
   const cash = usePortfolioStore((s) => s.cash);
@@ -10,6 +11,11 @@ export default function Portfolio() {
   const reset = usePortfolioStore((s) => s.reset);
 
   const [marks, setMarks] = useState({}); // id -> mark price
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState('');
+  const [analysisError, setAnalysisError] = useState('');
+  const [analysisPrices, setAnalysisPrices] = useState(null);
+  const [showPrices, setShowPrices] = useState(false);
 
   const rows = useMemo(() => Object.values(positions), [positions]);
 
@@ -37,6 +43,38 @@ export default function Portfolio() {
     }
   }, [rows]);
 
+  async function onAnalyze() {
+    try {
+      setAnalyzing(true);
+      setAnalysis('');
+      setAnalysisError('');
+      setAnalysisPrices(null);
+      if (!rows.length) {
+        setAnalysisError('No positions to analyze');
+        return;
+      }
+      const holdings = rows.map((p) => ({ symbol: p.symbol, quantity: p.quantity }));
+      const result = await analyzePortfolio({ holdings });
+      if (typeof result === 'string') {
+        setAnalysis(result);
+      } else if (result && typeof result === 'object') {
+        setAnalysis(result.analysis || '');
+        if (result.prices && typeof result.prices === 'object') setAnalysisPrices(result.prices);
+      } else {
+        setAnalysis('No analysis returned');
+      }
+    } catch (e) {
+      setAnalysisError(e.response?.data?.error || e.message || 'Failed to analyze');
+    } finally {
+      setAnalyzing(false);
+    }
+  }
+
+  function copyAnalysis() {
+    if (!analysis) return;
+    try { navigator.clipboard.writeText(analysis); } catch {}
+  }
+
   function handleClose(p) {
     const qtyStr = prompt(`Quantity to sell (max ${p.quantity}):`, String(p.quantity));
     const qty = Number(qtyStr);
@@ -63,7 +101,40 @@ export default function Portfolio() {
         <div className="card-content">
           <div className="controls" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
             <button className="button ghost" onClick={reset}>Reset</button>
+            <button className="button primary" onClick={onAnalyze} disabled={analyzing || rows.length === 0}>{analyzing ? 'Analyzing…' : 'Analyze Portfolio'}</button>
           </div>
+          {(analysisError || analysis) && (
+            <div className="card" style={{ marginBottom: 12 }}>
+              <div className="card-header">Analysis</div>
+              <div className="card-content">
+                {analysisError ? (
+                  <div style={{ color: 'var(--danger)' }}>{analysisError}</div>
+                ) : (
+                  <>
+                    <div className="controls" style={{ marginBottom: 8 }}>
+                      <button className="button ghost" onClick={copyAnalysis} disabled={!analysis}>Copy</button>
+                      {analysisPrices && (
+                        <button className="button ghost" onClick={() => setShowPrices((s) => !s)}>{showPrices ? 'Hide Prices used' : 'Show Prices used'}</button>
+                      )}
+                    </div>
+                    <textarea readOnly value={analysis} style={{ width: '100%', minHeight: 160, resize: 'vertical' }} />
+                    {showPrices && analysisPrices && (
+                      <div className="table-wrap" style={{ marginTop: 8 }}>
+                        <table className="table">
+                          <thead><tr><th>Symbol</th><th>Price</th></tr></thead>
+                          <tbody>
+                            {Object.entries(analysisPrices).map(([sym, pr]) => (
+                              <tr key={sym}><td>{sym}</td><td>{Number(pr)?.toFixed ? Number(pr).toFixed(4) : pr}</td></tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          )}
           <div className="table-wrap">
             <table className="table">
               <thead>
