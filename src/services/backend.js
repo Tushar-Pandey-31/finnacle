@@ -45,8 +45,8 @@ export async function getHoldings({ portfolioId }) {
 }
 
 // AI analysis
-export async function analyzePortfolio({ portfolioId, holdings }) {
+export async function analyzePortfolio({ holdings }) {
   return backend
-    .post('/api/ai/analyze-portfolio', { portfolioId, holdings })
+    .post('/api/ai/analyze-portfolio', { holdings }) // Only send holdings
     .then((r) => r.data);
 }
