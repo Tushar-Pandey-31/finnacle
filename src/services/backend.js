@@ -50,3 +50,9 @@ export async function analyzePortfolio({ holdings }) {
     .post('/api/ai/analyze-portfolio', { holdings }) // Only send holdings
     .then((r) => r.data);
 }
+
+// Auth - email verification
+export async function verifyEmailToken(token) {
+  const { data } = await backend.post('/api/auth/verify-email', { token });
+  return data;
+}
