@@ -25,7 +25,6 @@ export default function Navbar() {
       <Link to="/derivatives" onClick={() => onNavigate?.()} className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
       <Link to="/options" onClick={() => onNavigate?.()} className={current === '/options' ? 'active' : ''}>Options</Link>
       <Link to="/portfolio" onClick={() => onNavigate?.()} className={current === '/portfolio' ? 'active' : ''}>Portfolio</Link>
-      <Link to="/my-portfolio" onClick={() => onNavigate?.()} className={current === '/my-portfolio' ? 'active' : ''}>My Portfolio</Link>
       <Link to="/watchlist" onClick={() => onNavigate?.()} className={current === '/watchlist' ? 'active' : ''}>Watchlist</Link>
       {!token ? (
         <>

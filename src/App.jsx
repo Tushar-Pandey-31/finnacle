@@ -30,7 +30,7 @@ function App() {
               <Route path="/derivatives" element={<Derivatives />} />
               <Route path="/options" element={<Options />} />
               <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="/my-portfolio" element={<MyPortfolio />} />
+              {/* <Route path="/my-portfolio" element={<MyPortfolio />} /> */}
               <Route path="/watchlist" element={<Watchlist/>} ></Route>
             </Route>
           </Routes>
