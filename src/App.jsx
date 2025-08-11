@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import Options from './pages/Options';
-import Portfolio from './pages/Portfolio';
 import Derivatives from './pages/Derivatives';
 import Crypto from './pages/Crypto';
 import Forex from './pages/Forex';
@@ -29,7 +28,7 @@ function App() {
               <Route path="/forex" element={<Forex />} />
               <Route path="/derivatives" element={<Derivatives />} />
               <Route path="/options" element={<Options />} />
-              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio" element={<MyPortfolio />} />
               <Route path="/my-portfolio" element={<MyPortfolio />} />
               <Route path="/watchlist" element={<Watchlist/>} ></Route>
             </Route>
