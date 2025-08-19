@@ -43,6 +43,9 @@ export default function Login() {
             <div style={{ color: 'var(--muted)' }}>
               New user? <Link to="/register">Create an account</Link>
             </div>
+            <div style={{ color: 'var(--muted)' }}>
+              <Link to="/forgot-password">Forgot your password?</Link>
+            </div>
           </form>
         </div>
       </div>
