@@ -10,7 +10,6 @@ export default function Portfolio() {
   const setPositions = usePortfolioStore.setState;
   const realizedPnl = usePortfolioStore((s) => s.realizedPnl);
   const sellLocal = usePortfolioStore((s) => s.sell);
-  const reset = usePortfolioStore((s) => s.reset);
 
   const [marks, setMarks] = useState({}); // id -> mark price
   const [analyzing, setAnalyzing] = useState(false);
@@ -133,7 +132,6 @@ export default function Portfolio() {
         <div className="card-header">Positions</div>
         <div className="card-content">
           <div className="controls" style={{ marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
-            <button className="button ghost" onClick={reset}>Reset</button>
             <button className="button primary" onClick={onAnalyze} disabled={analyzing || rows.length === 0}>{analyzing ? 'Analyzing…' : 'Analyze Portfolio'}</button>
           </div>
           {(analysisError || analysis) && (
