@@ -15,6 +15,8 @@ import Watchlist from './pages/Watchlist';
 import VerifyEmail from './pages/VerifyEmail';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Quiz from './pages/Quiz';
+import Leaderboard from './pages/Leaderboard';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
 
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Dashboard />} />
+              <Route path="/quiz" element={<Quiz />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/crypto" element={<Crypto />} />
               <Route path="/forex" element={<Forex />} />
               <Route path="/derivatives" element={<Derivatives />} />

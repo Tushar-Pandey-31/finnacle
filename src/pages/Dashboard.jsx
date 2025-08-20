@@ -5,6 +5,8 @@ import CandleChart from '../components/CandleChart';
 import SparklineChart from '../components/SparklineChart';
 import { useQuoteStream } from '../hooks/useQuoteStream';
 import TradePanel from '../components/TradePanel';
+import { useAuthStore } from '../store/authStore';
+import { useNavigate } from 'react-router-dom';
 
 const ONE_DAY = 24 * 60 * 60;
 
@@ -17,6 +19,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
 
   const { points, last } = useQuoteStream(symbol, { intervalMs: 5000, maxPoints: 300 });
+  const walletBalanceCents = useAuthStore((s) => s.walletBalanceCents);
+  const navigate = useNavigate();
 
   const loadAll = async (sym) => {
     setLoading(true); setError(''); setInfo('');
@@ -59,6 +63,11 @@ const Dashboard = () => {
           <div className="controls" style={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, alignItems: 'flex-start' }}>
             <h1 style={{ margin: 0, flex: '0 0 auto' }}>Stock Dashboard</h1>
             <div className="controls" style={{ flexWrap: 'wrap', gap: 8, flex: '1 1 320px', justifyContent: 'flex-end', minWidth: 0 }}>
+              <div className="kpi" style={{ marginRight: 8 }}>
+                <div className="kpi-label">Wallet</div>
+                <div className="kpi-value">{((walletBalanceCents || 0) / 100).toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</div>
+              </div>
+              <button className="button" onClick={() => navigate('/quiz')}>Take Today’s Quiz</button>
               <input 
                 className="input" 
                 type="text" 

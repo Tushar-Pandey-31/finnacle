@@ -6,6 +6,7 @@ export default function Navbar() {
   const location = useLocation();
   const current = location.pathname;
   const token = useAuthStore((s) => s.token);
+  const walletBalanceCents = useAuthStore((s) => s.walletBalanceCents);
   const logout = useAuthStore((s) => s.logout);
   const [open, setOpen] = useState(false);
 
@@ -20,6 +21,8 @@ export default function Navbar() {
   const MobileNavItems = ({ onNavigate }) => (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <Link to="/" onClick={() => onNavigate?.()} className={current === '/' ? 'active' : ''}>Dashboard</Link>
+      <Link to="/quiz" onClick={() => onNavigate?.()} className={current === '/quiz' ? 'active' : ''}>Quiz</Link>
+      <Link to="/leaderboard" onClick={() => onNavigate?.()} className={current === '/leaderboard' ? 'active' : ''}>Leaderboard</Link>
       <Link to="/crypto" onClick={() => onNavigate?.()} className={current === '/crypto' ? 'active' : ''}>Crypto</Link>
       <Link to="/forex" onClick={() => onNavigate?.()} className={current === '/forex' ? 'active' : ''}>Forex</Link>
       <Link to="/derivatives" onClick={() => onNavigate?.()} className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
@@ -46,6 +49,8 @@ export default function Navbar() {
         {!isAuthPage && (
           <nav className="desktop-nav">
             <Link to="/" className={current === '/' ? 'active' : ''}>Dashboard</Link>
+            <Link to="/quiz" className={current === '/quiz' ? 'active' : ''}>Quiz</Link>
+            <Link to="/leaderboard" className={current === '/leaderboard' ? 'active' : ''}>Leaderboard</Link>
             <Link to="/crypto" className={current === '/crypto' ? 'active' : ''}>Crypto</Link>
             <Link to="/forex" className={current === '/forex' ? 'active' : ''}>Forex</Link>
             <Link to="/derivatives" className={current === '/derivatives' ? 'active' : ''}>Derivatives</Link>
@@ -58,7 +63,13 @@ export default function Navbar() {
                 <Link to="/register" className={current === '/register' ? 'active' : ''}>Register</Link>
               </>
             ) : (
-              <button className="button ghost" onClick={logout}>Logout</button>
+              <>
+                <div className="kpi" style={{ marginRight: 8 }}>
+                  <div className="kpi-label">Wallet</div>
+                  <div className="kpi-value">{((walletBalanceCents || 0) / 100).toLocaleString(undefined, { style: 'currency', currency: 'USD' })}</div>
+                </div>
+                <button className="button ghost" onClick={logout}>Logout</button>
+              </>
             )}
           </nav>
         )}

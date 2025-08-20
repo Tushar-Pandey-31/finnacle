@@ -7,6 +7,7 @@ export const useAuthStore = create(
     (set, get) => ({
       token: null,
       email: null,
+      walletBalanceCents: 0,
       error: null,
       async register({ email, password }) {
         try {
@@ -24,7 +25,8 @@ export const useAuthStore = create(
           const token = res?.token;
           if (token) {
             setAuthToken(token);
-            set({ token, email, error: null });
+            const walletBalanceCents = res?.user?.walletBalanceCents ?? 0;
+            set({ token, email, walletBalanceCents, error: null });
             return true;
           }
           set({ error: 'No token returned' });
@@ -33,6 +35,9 @@ export const useAuthStore = create(
           set({ error: e.response?.data?.error || e.message || 'Login failed' });
           return false;
         }
+      },
+      setWalletBalanceCents(amount) {
+        set({ walletBalanceCents: amount });
       },
       async logout() {
         try { await logoutUser(); } catch {}
