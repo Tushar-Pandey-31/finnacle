@@ -66,3 +66,29 @@ export async function resetPassword({ token, password }) {
   const { data } = await backend.post('/api/auth/reset-password', { token, password });
   return data;
 }
+
+// Quiz & Leaderboard APIs
+export async function getQuizToday() {
+  const { data } = await backend.get('/api/quiz/today');
+  return data; // { assignmentId, dateUTC, questions, progress }
+}
+
+export async function answerQuiz({ assignmentId, questionId, selectedIndex }) {
+  const { data } = await backend.post('/api/quiz/answer', { assignmentId, questionId, selectedIndex });
+  return data; // { isCorrect, newWalletBalanceCents, attemptedCount, correctCount }
+}
+
+export async function getQuizProgress() {
+  const { data } = await backend.get('/api/quiz/progress');
+  return data; // { attemptedCount, correctCount, remaining, questions }
+}
+
+export async function getLeaderboard({ limit = 100, offset = 0 } = {}) {
+  const { data } = await backend.get('/api/leaderboard', { params: { limit, offset } });
+  return data; // { users: [...], me: { rank, walletBalanceCents } | null }
+}
+
+export async function getLeaderboardMe() {
+  const { data } = await backend.get('/api/leaderboard/me');
+  return data; // { rank, walletBalanceCents }
+}
