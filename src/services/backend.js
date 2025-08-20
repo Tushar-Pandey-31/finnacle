@@ -92,3 +92,19 @@ export async function getLeaderboardMe() {
   const { data } = await backend.get('/api/leaderboard/me');
   return data; // { rank, walletBalanceCents }
 }
+
+// Portfolio & Trades
+export async function getPortfolioSummary() {
+  const { data } = await backend.get('/api/portfolio/summary');
+  return data; // expected { positions: [...], cashCents? }
+}
+
+export async function tradeBuy({ symbol, quantity, price }) {
+  const { data } = await backend.post('/api/trades/buy', { symbol, quantity, price });
+  return data; // expected { success, newWalletBalanceCents }
+}
+
+export async function tradeSell({ symbol, quantity, price }) {
+  const { data } = await backend.post('/api/trades/sell', { symbol, quantity, price });
+  return data; // expected { success, newWalletBalanceCents }
+}

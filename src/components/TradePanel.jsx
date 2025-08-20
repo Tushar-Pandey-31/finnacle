@@ -1,31 +1,48 @@
 import { useState, useMemo } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
+import { useAuthStore } from '../store/authStore';
+import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
 
 export default function TradePanel({ symbol, price }) {
   const [qty, setQty] = useState('1');
   const [limit, setLimit] = useState('');
-  const buy = usePortfolioStore((s) => s.buy);
-  const sell = usePortfolioStore((s) => s.sell);
-  const cash = usePortfolioStore((s) => s.cash);
+  const setPositions = usePortfolioStore.setState;
   const positions = usePortfolioStore((s) => s.positions);
+  const walletBalanceCents = useAuthStore((s) => s.walletBalanceCents);
+  const setWalletBalanceCents = useAuthStore((s) => s.setWalletBalanceCents);
 
   const id = symbol?.trim().toUpperCase();
   const usePrice = useMemo(() => Number(limit) > 0 ? Number(limit) : Number(price) || 0, [limit, price]);
   const estCost = useMemo(() => usePrice * (Number(qty) || 0), [usePrice, qty]);
   const posQty = positions[id]?.quantity || 0;
 
-  function onBuy() {
+  async function onBuy() {
     const q = Number(qty);
     const p = usePrice;
     if (!id || !q || !p) return;
+    const cash = (walletBalanceCents || 0) / 100;
     if (estCost > cash) {
-      const ok = confirm(`This will exceed cash by $${(estCost - cash).toFixed(2)}. Proceed?`);
-      if (!ok) return;
+      alert('Insufficient wallet balance');
+      return;
     }
-    buy({ id, symbol: id, type: 'stock', quantity: q, price: p, meta: {} });
+    try {
+      const res = await tradeBuy({ symbol: id, quantity: q, price: p });
+      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const summary = await getPortfolioSummary();
+      const list = Array.isArray(summary?.positions) ? summary.positions : [];
+      const mapped = {};
+      for (const pos of list) {
+        const key = pos.id || pos.symbol;
+        if (!key) continue;
+        mapped[key] = { id: key, symbol: pos.symbol || key, type: pos.type || 'stock', quantity: Number(pos.quantity) || 0, avgPrice: Number(pos.avgPrice) || 0, meta: pos.meta || {} };
+      }
+      setPositions({ positions: mapped });
+    } catch (e) {
+      alert(e?.response?.data?.error || e.message || 'Buy failed');
+    }
   }
 
-  function onSell() {
+  async function onSell() {
     const q = Number(qty);
     const p = usePrice;
     if (!id || !q || !p) return;
@@ -33,7 +50,21 @@ export default function TradePanel({ symbol, price }) {
       alert('Insufficient quantity to sell');
       return;
     }
-    sell({ id, symbol: id, type: 'stock', quantity: q, price: p });
+    try {
+      const res = await tradeSell({ symbol: id, quantity: q, price: p });
+      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const summary = await getPortfolioSummary();
+      const list = Array.isArray(summary?.positions) ? summary.positions : [];
+      const mapped = {};
+      for (const pos of list) {
+        const key = pos.id || pos.symbol;
+        if (!key) continue;
+        mapped[key] = { id: key, symbol: pos.symbol || key, type: pos.type || 'stock', quantity: Number(pos.quantity) || 0, avgPrice: Number(pos.avgPrice) || 0, meta: pos.meta || {} };
+      }
+      setPositions({ positions: mapped });
+    } catch (e) {
+      alert(e?.response?.data?.error || e.message || 'Sell failed');
+    }
   }
 
   return (
