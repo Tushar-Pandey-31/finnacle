@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useAuthStore } from '../store/authStore';
-import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
+import { buyStock, sellStock, getPortfolioSummary } from '../services/backend';
 
 export default function Derivatives() {
   const [symbol, setSymbol] = useState('AAPL');
@@ -25,8 +25,8 @@ export default function Derivatives() {
     const cash = (walletBalanceCents || 0) / 100;
     if (qn * pn > cash) { alert('Insufficient wallet balance'); return; }
     try {
-      const res = await tradeBuy({ symbol: symbol.trim().toUpperCase(), quantity: qn, price: pn, type: 'option', meta: { type, strike: Number(strike), expirationDate: expiry } });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await buyStock({ symbol: symbol.trim().toUpperCase(), quantity: qn, priceUsd: pn });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};
@@ -39,8 +39,8 @@ export default function Derivatives() {
     if (!qn || !pn) return;
     if (qn > posQty) { alert('Insufficient quantity to sell'); return; }
     try {
-      const res = await tradeSell({ symbol: symbol.trim().toUpperCase(), quantity: qn, price: pn, type: 'option' });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await sellStock({ symbol: symbol.trim().toUpperCase(), quantity: qn, priceUsd: pn });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};

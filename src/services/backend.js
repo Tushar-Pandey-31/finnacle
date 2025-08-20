@@ -67,6 +67,11 @@ export async function resetPassword({ token, password }) {
   return data;
 }
 
+// Money helpers
+export function toCents(x) {
+  return Math.round(Number(x) * 100);
+}
+
 // Quiz & Leaderboard APIs
 export async function getQuizToday() {
   const { data } = await backend.get('/api/quiz/today');
@@ -107,4 +112,19 @@ export async function tradeBuy({ symbol, quantity, price }) {
 export async function tradeSell({ symbol, quantity, price }) {
   const { data } = await backend.post('/api/trades/sell', { symbol, quantity, price });
   return data; // expected { success, newWalletBalanceCents }
+}
+
+// Preferred client helpers that adhere to cents contract
+export async function buyStock({ symbol, quantity, priceUsd }) {
+  const body = { symbol, quantity };
+  if (priceUsd != null && priceUsd !== '') body.priceCents = toCents(priceUsd);
+  const { data } = await backend.post('/api/trades/buy', body);
+  return data; // { walletBalanceCents, positions, realizedPnlCents }
+}
+
+export async function sellStock({ symbol, quantity, priceUsd }) {
+  const body = { symbol, quantity };
+  if (priceUsd != null && priceUsd !== '') body.priceCents = toCents(priceUsd);
+  const { data } = await backend.post('/api/trades/sell', body);
+  return data; // { walletBalanceCents, positions, realizedPnlCents }
 }

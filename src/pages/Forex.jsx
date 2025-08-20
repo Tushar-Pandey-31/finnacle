@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getFxPair } from '../services/forex';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useAuthStore } from '../store/authStore';
-import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
+import { buyStock, sellStock, getPortfolioSummary } from '../services/backend';
 import PageChart from '../components/PageChart';
 import { usePolling } from '../hooks/usePolling';
 
@@ -40,8 +40,8 @@ export default function Forex() {
     const cash = (walletBalanceCents || 0) / 100;
     if (q * p > cash) { alert('Insufficient wallet balance'); return; }
     try {
-      const res = await tradeBuy({ symbol: pair, quantity: q, price: p });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await buyStock({ symbol: pair, quantity: q, priceUsd: rate });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};
@@ -54,8 +54,8 @@ export default function Forex() {
     if (!q || !p) return;
     if (q > posQty) { alert('Insufficient quantity'); return; }
     try {
-      const res = await tradeSell({ symbol: pair, quantity: q, price: p });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await sellStock({ symbol: pair, quantity: q, priceUsd: rate });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};
