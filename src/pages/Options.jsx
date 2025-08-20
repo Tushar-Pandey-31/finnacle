@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { getOptionChain } from '../services/finnhub';
 import { usePortfolioStore } from '../store/portfolioStore';
+import { useAuthStore } from '../store/authStore';
+import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
 
 export default function Options() {
   const [symbol, setSymbol] = useState('AAPL');
@@ -9,7 +11,9 @@ export default function Options() {
   const [chain, setChain] = useState(null);
   const [expiry, setExpiry] = useState('');
 
-  const buy = usePortfolioStore((s) => s.buy);
+  const setPositions = usePortfolioStore.setState;
+  const walletBalanceCents = useAuthStore((s) => s.walletBalanceCents);
+  const setWalletBalanceCents = useAuthStore((s) => s.setWalletBalanceCents);
 
   const expirations = useMemo(() => {
     if (!chain) return [];
@@ -40,7 +44,7 @@ export default function Options() {
     }
   }
 
-  function handleTrade(option, side) {
+  async function handleTrade(option, side) {
     const qtyStr = prompt(`Enter quantity to ${side} for ${option.symbol || symbol} ${option.type || option.optionType || ''} ${option.strike || ''} ${option.expirationDate || ''}`);
     const qty = Number(qtyStr);
     if (!qty || qty <= 0) return;
@@ -49,12 +53,27 @@ export default function Options() {
     const price = Number(priceStr);
     if (!price || price <= 0) return;
     const id = option.contractIdentifier || `${symbol}-${option.expirationDate}-${option.strike}-${(option.type || option.optionType || 'CALL').toUpperCase()}`;
-    const payload = { id, symbol, type: 'option', quantity: qty, price, meta: { ...option } };
+    const payload = { symbol, quantity: qty, price, type: 'option', meta: { ...option, id } };
     if (side === 'buy') {
-      buy(payload);
+      const cash = (walletBalanceCents || 0) / 100;
+      if (qty * price > cash) { alert('Insufficient wallet balance'); return; }
+      try {
+        const res = await tradeBuy(payload);
+        if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      } catch (e) { alert(e?.response?.data?.error || e.message || 'Buy failed'); return; }
     } else {
-      usePortfolioStore.getState().sell({ id, symbol, type: 'option', quantity: qty, price });
+      try {
+        const res = await tradeSell(payload);
+        if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      } catch (e) { alert(e?.response?.data?.error || e.message || 'Sell failed'); return; }
     }
+    try {
+      const summary = await getPortfolioSummary();
+      const list = Array.isArray(summary?.positions) ? summary.positions : [];
+      const mapped = {};
+      for (const pos of list) { const key = pos.id || pos.symbol; if (!key) continue; mapped[key] = { id: key, symbol: pos.symbol || key, type: pos.type || 'stock', quantity: Number(pos.quantity) || 0, avgPrice: Number(pos.avgPrice) || 0, meta: pos.meta || {} }; }
+      setPositions({ positions: mapped });
+    } catch {}
   }
 
   return (

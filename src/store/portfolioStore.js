@@ -10,19 +10,16 @@ function computeAveragePrice(currentAvg, currentQty, tradeQty, tradePrice) {
 export const usePortfolioStore = create(
   persist(
     (set, get) => ({
-      cash: 10000, // temporary client-only default; backend is source of truth
       positions: {}, // key -> { id, symbol, type: 'stock'|'option', quantity, avgPrice, meta }
       orders: [], // { id, side, symbol, type, quantity, price, timestamp }
       realizedPnl: 0,
 
       reset() {
-        set({ cash: 10000, positions: {}, orders: [], realizedPnl: 0 });
+        set({ positions: {}, orders: [], realizedPnl: 0 });
       },
 
       buy({ id, symbol, type, quantity, price, meta }) {
         const state = get();
-        const cost = quantity * price;
-        const nextCash = state.cash - cost;
         const existing = state.positions[id] || { id, symbol, type, quantity: 0, avgPrice: 0, meta };
         const nextQty = existing.quantity + quantity;
         const nextAvg = computeAveragePrice(existing.avgPrice, existing.quantity, quantity, price);
@@ -31,7 +28,6 @@ export const usePortfolioStore = create(
           [id]: { ...existing, quantity: nextQty, avgPrice: nextAvg, meta: { ...existing.meta, ...meta } },
         };
         set({
-          cash: nextCash,
           positions: nextPositions,
           orders: [
             ...state.orders,
@@ -46,8 +42,6 @@ export const usePortfolioStore = create(
         if (!existing || existing.quantity < quantity) {
           throw new Error('Insufficient quantity to sell');
         }
-        const proceeds = quantity * price;
-        const nextCash = state.cash + proceeds;
         const remainingQty = existing.quantity - quantity;
         const realized = (price - existing.avgPrice) * quantity;
         const nextPositions = { ...state.positions };
@@ -57,7 +51,6 @@ export const usePortfolioStore = create(
           nextPositions[id] = { ...existing, quantity: remainingQty };
         }
         set({
-          cash: nextCash,
           positions: nextPositions,
           realizedPnl: state.realizedPnl + realized,
           orders: [
