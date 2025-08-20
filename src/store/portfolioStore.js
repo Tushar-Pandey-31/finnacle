@@ -10,13 +10,13 @@ function computeAveragePrice(currentAvg, currentQty, tradeQty, tradePrice) {
 export const usePortfolioStore = create(
   persist(
     (set, get) => ({
-      cash: 100000,
+      cash: 10000, // temporary client-only default; backend is source of truth
       positions: {}, // key -> { id, symbol, type: 'stock'|'option', quantity, avgPrice, meta }
       orders: [], // { id, side, symbol, type, quantity, price, timestamp }
       realizedPnl: 0,
 
       reset() {
-        set({ cash: 100000, positions: {}, orders: [], realizedPnl: 0 });
+        set({ cash: 10000, positions: {}, orders: [], realizedPnl: 0 });
       },
 
       buy({ id, symbol, type, quantity, price, meta }) {

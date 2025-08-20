@@ -1,13 +1,15 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
+import { useAuthStore } from '../store/authStore';
 import { getQuote } from '../services/finnhub';
-import { analyzePortfolio } from '../services/backend';
+import { analyzePortfolio, getPortfolioSummary } from '../services/backend';
 
 export default function Portfolio() {
-  const cash = usePortfolioStore((s) => s.cash);
-  const positions = usePortfolioStore((s) => s.positions);
+  const walletBalanceCents = useAuthStore((s) => s.walletBalanceCents);
+  const positionsStore = usePortfolioStore((s) => s.positions);
+  const setPositions = usePortfolioStore.setState;
   const realizedPnl = usePortfolioStore((s) => s.realizedPnl);
-  const sell = usePortfolioStore((s) => s.sell);
+  const sellLocal = usePortfolioStore((s) => s.sell);
   const reset = usePortfolioStore((s) => s.reset);
 
   const [marks, setMarks] = useState({}); // id -> mark price
@@ -17,9 +19,10 @@ export default function Portfolio() {
   const [analysisPrices, setAnalysisPrices] = useState(null);
   const [showPrices, setShowPrices] = useState(false);
 
-  const rows = useMemo(() => Object.values(positions), [positions]);
+  const rows = useMemo(() => Object.values(positionsStore), [positionsStore]);
 
   const totalValue = rows.reduce((sum, p) => sum + (marks[p.id] || p.avgPrice) * p.quantity, 0);
+  const cash = (walletBalanceCents || 0) / 100;
   const equity = cash + totalValue;
 
   // Periodically refresh mark prices for live P&L
@@ -42,6 +45,36 @@ export default function Portfolio() {
       return () => { cancelled = true; clearInterval(t); };
     }
   }, [rows]);
+
+  // Load positions from backend summary and mirror to local store
+  useEffect(() => {
+    let cancelled = false;
+    async function loadPositions() {
+      try {
+        const summary = await getPortfolioSummary();
+        const list = Array.isArray(summary?.positions) ? summary.positions : [];
+        if (!cancelled) {
+          const mapped = {};
+          for (const p of list) {
+            const key = p.id || p.symbol;
+            if (!key) continue;
+            mapped[key] = {
+              id: key,
+              symbol: p.symbol || key,
+              type: p.type || 'stock',
+              quantity: Number(p.quantity) || 0,
+              avgPrice: Number(p.avgPrice) || 0,
+              meta: p.meta || {},
+            };
+          }
+          setPositions({ positions: mapped });
+        }
+      } catch {}
+    }
+    loadPositions();
+    const t = setInterval(loadPositions, 20000);
+    return () => { cancelled = true; clearInterval(t); };
+  }, [setPositions]);
 
   async function onAnalyze() {
     try {
@@ -82,14 +115,14 @@ export default function Portfolio() {
     const priceStr = prompt('Sell price:', String(marks[p.id] || p.avgPrice));
     const price = Number(priceStr);
     if (!price || price <= 0) return;
-    sell({ id: p.id, symbol: p.symbol, type: p.type, quantity: qty, price });
+    sellLocal({ id: p.id, symbol: p.symbol, type: p.type, quantity: qty, price });
   }
 
   return (
     <div className="container">
       <div className="grid" style={{ marginBottom: 16 }}>
         <div className="kpis">
-          <div className="kpi"><div className="kpi-label">Cash</div><div className="kpi-value">${cash.toFixed(2)}</div></div>
+          <div className="kpi"><div className="kpi-label">Wallet</div><div className="kpi-value">${cash.toFixed(2)}</div></div>
           <div className="kpi"><div className="kpi-label">Positions Value</div><div className="kpi-value">${totalValue.toFixed(2)}</div></div>
           <div className="kpi"><div className="kpi-label">Equity</div><div className="kpi-value">${equity.toFixed(2)}</div></div>
           <div className="kpi"><div className="kpi-label">Realized PnL</div><div className="kpi-value" style={{ color: realizedPnl >= 0 ? 'var(--accent)' : 'var(--danger)' }}>${realizedPnl.toFixed(2)}</div></div>
