@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useAuthStore } from '../store/authStore';
-import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
+import { buyStock, sellStock, getPortfolioSummary } from '../services/backend';
 
 export default function TradePanel({ symbol, price }) {
   const [qty, setQty] = useState('1');
@@ -26,8 +26,8 @@ export default function TradePanel({ symbol, price }) {
       return;
     }
     try {
-      const res = await tradeBuy({ symbol: id, quantity: q, price: p });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await buyStock({ symbol: id, quantity: q, priceUsd: limit ? p : undefined });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};
@@ -51,8 +51,8 @@ export default function TradePanel({ symbol, price }) {
       return;
     }
     try {
-      const res = await tradeSell({ symbol: id, quantity: q, price: p });
-      if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+      const res = await sellStock({ symbol: id, quantity: q, priceUsd: limit ? p : undefined });
+      if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       const summary = await getPortfolioSummary();
       const list = Array.isArray(summary?.positions) ? summary.positions : [];
       const mapped = {};

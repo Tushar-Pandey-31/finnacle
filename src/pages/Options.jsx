@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { getOptionChain } from '../services/finnhub';
 import { usePortfolioStore } from '../store/portfolioStore';
 import { useAuthStore } from '../store/authStore';
-import { tradeBuy, tradeSell, getPortfolioSummary } from '../services/backend';
+import { buyStock, sellStock, getPortfolioSummary } from '../services/backend';
 
 export default function Options() {
   const [symbol, setSymbol] = useState('AAPL');
@@ -58,13 +58,13 @@ export default function Options() {
       const cash = (walletBalanceCents || 0) / 100;
       if (qty * price > cash) { alert('Insufficient wallet balance'); return; }
       try {
-        const res = await tradeBuy(payload);
-        if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+        const res = await buyStock({ symbol, quantity: qty, priceUsd: price });
+        if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       } catch (e) { alert(e?.response?.data?.error || e.message || 'Buy failed'); return; }
     } else {
       try {
-        const res = await tradeSell(payload);
-        if (typeof res?.newWalletBalanceCents === 'number') setWalletBalanceCents(res.newWalletBalanceCents);
+        const res = await sellStock({ symbol, quantity: qty, priceUsd: price });
+        if (typeof res?.walletBalanceCents === 'number') setWalletBalanceCents(res.walletBalanceCents);
       } catch (e) { alert(e?.response?.data?.error || e.message || 'Sell failed'); return; }
     }
     try {
